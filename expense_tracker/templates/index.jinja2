@@ -1,0 +1,24 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Cost</th>
+        <th>Due Date</th>
+        <th>Links</th>
+    </tr>
+    {% for expense in expenses %}
+    <tr>
+        <td>{{ expense.title }}</td>
+        {% if expense.amount > 1000 %}
+            <td style="color: green;">£{{ expense.amount }}</td>
+        {% elif expense.amount < 1000 %}
+            <td>£{{ expense.amount }}</td>
+        {% endif %}
+        <td>{{ expense.due_date }}</td>
+        <td><a href="{{ request.route_url('detail', id=expense.id) }}">See Expense</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

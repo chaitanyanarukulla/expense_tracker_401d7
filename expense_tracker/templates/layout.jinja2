@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 2 stuff</title>
+    <link rel="stylesheet" type="text/css" href="{{ request.static_path('expense_tracker:static/style.css') }}" />
+</head>
+<body>
+    <nav>
+        <li><a href="{{ request.route_url('home') }}">Home</a></li>
+    </nav>
+    <h1>{{ title }}</h1>
+    {% block content %}{% endblock %}
+</body>
+</html>
