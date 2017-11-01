@@ -15,10 +15,11 @@ requires = [
     'pyramid_jinja2',
     'pyramid_retry',
     'pyramid_tm',
-    'SQLAlchemy',
+    'SQLAlchemy', # OBJECT RELATIONAL MAPPER
     'transaction',
     'zope.sqlalchemy',
     'waitress',
+    'psycopg2'
 ]
 
 tests_require = [
@@ -54,7 +55,7 @@ setup(
             'main = expense_tracker:main',
         ],
         'console_scripts': [
-            'initialize_expense_tracker_db = expense_tracker.scripts.initializedb:main',
+            'initdb = expense_tracker.scripts.initializedb:main',
         ],
     },
 )
