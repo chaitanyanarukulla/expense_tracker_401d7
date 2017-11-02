@@ -4,4 +4,5 @@
 <p>Title: {{ expense.title }}</p>
 <p>Amount: £{{ expense.amount }}</p>
 <p>Due By: {{ expense.due_date }}</p>
+<a href="{{ request.route_url('delete', id=expense.id) }}">DELETE ME!</a>
 {% endblock %}

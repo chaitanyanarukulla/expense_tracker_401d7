@@ -1,6 +1,7 @@
 from pyramid.view import view_config
-from pyramid.httpexceptions import HTTPNotFound
+from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
 from expense_tracker.models import Expense
+from datetime import datetime
 
 
 @view_config(route_name='home', renderer="expense_tracker:templates/index.jinja2")
@@ -24,6 +25,57 @@ def expense_detail(request):
         }
     raise HTTPNotFound
 
+
+@view_config(route_name='create', renderer="expense_tracker:templates/create_expense.jinja2")
+def create_expense(request):
+    """Create a new expense and add it to the database."""
+    if request.method == "GET":
+        return {}
+
+    if request.method == "POST":
+        if not all([field in request.POST for field in ['title', 'amount', 'due_date']]):
+            raise HTTPBadRequest
+        new_expense = Expense(
+            title=request.POST['title'],
+            amount=request.POST['amount'],
+            due_date=datetime.strptime(request.POST['due_date'], '%Y-%m-%d')
+        )
+        request.dbsession.add(new_expense)
+        return HTTPFound(request.route_url('home'))
+
+
+@view_config(route_name='update', renderer="expense_tracker:templates/edit_expense.jinja2")
+def update_expense(request):
+    """Create a new expense and add it to the database."""
+    expense_id = int(request.matchdict['id'])
+    expense = request.dbsession.query(Expense).get(expense_id)
+    if not expense:
+        raise HTTPNotFound
+
+    if request.method == "GET":
+        return {
+            'title': 'Edit Expense',
+            'expense': expense.to_dict()
+        }
+
+    if request.method == "POST":
+        expense.title = request.POST['title']
+        expense.amount = request.POST['amount']
+        expense.due_date = datetime.strptime(request.POST['due_date'], '%Y-%m-%d')
+        request.dbsession.add(expense)
+        request.dbsession.flush()
+        return HTTPFound(request.route_url('detail', id=expense.id))
+
+
+@view_config(route_name='delete')
+def delete_expense(request):
+    expense_id = int(request.matchdict['id'])
+    expense = request.dbsession.query(Expense).get(expense_id)
+    if not expense:
+        raise HTTPNotFound
+
+    request.dbsession.delete(expense)
+    return HTTPFound(request.route_url('home'))
 
 # @view_config(route_name="api_detail", renderer="json")
 # def api_detail(request):

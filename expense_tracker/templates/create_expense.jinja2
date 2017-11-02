@@ -1,0 +1,21 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<form method="POST">
+    <table>
+        <tr>
+            <td><label for="title">Title</label></td>
+            <td><input type="text" name="title" /></td>
+        </tr>
+        <tr>
+            <td><label for="amount">Amount</label></td>
+            <td><input type="number" name="amount" step="0.01" /></td>
+        </tr>
+        <tr>
+            <td><label for="due_date">Due Date</label></td>
+            <td><input type="date" name="due_date" format="mm/dd/yyyy" /></td>
+        </tr>
+        <tr><td></td><td><input type="submit" value="Submit New Expense"></td></tr>
+    </table>
+</form>
+{% endblock %}
