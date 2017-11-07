@@ -1,6 +1,8 @@
 from pyramid.view import view_config
 from pyramid.httpexceptions import HTTPNotFound, HTTPFound, HTTPBadRequest
+from pyramid.security import remember, forget, NO_PERMISSION_REQUIRED
 from expense_tracker.models import Expense
+from expense_tracker.security import is_authenticated
 from datetime import datetime
 
 
@@ -26,7 +28,11 @@ def expense_detail(request):
     raise HTTPNotFound
 
 
-@view_config(route_name='create', renderer="expense_tracker:templates/create_expense.jinja2")
+@view_config(
+    route_name='create',
+    renderer="expense_tracker:templates/create_expense.jinja2",
+    permission='secret'
+)
 def create_expense(request):
     """Create a new expense and add it to the database."""
     if request.method == "GET":
@@ -44,7 +50,11 @@ def create_expense(request):
         return HTTPFound(request.route_url('home'))
 
 
-@view_config(route_name='update', renderer="expense_tracker:templates/edit_expense.jinja2")
+@view_config(
+    route_name='update',
+    renderer="expense_tracker:templates/edit_expense.jinja2",
+    permission='secret'
+)
 def update_expense(request):
     """Create a new expense and add it to the database."""
     expense_id = int(request.matchdict['id'])
@@ -67,7 +77,10 @@ def update_expense(request):
         return HTTPFound(request.route_url('detail', id=expense.id))
 
 
-@view_config(route_name='delete')
+@view_config(
+    route_name='delete',
+    permission='secret'
+)
 def delete_expense(request):
     expense_id = int(request.matchdict['id'])
     expense = request.dbsession.query(Expense).get(expense_id)
@@ -88,3 +101,34 @@ def delete_expense(request):
 #         'title': 'One Expense',
 #         'expense': expense
 #     }
+
+
+@view_config(
+    route_name='login',
+    renderer="expense_tracker:templates/login.jinja2",
+    permission=NO_PERMISSION_REQUIRED
+)
+def login(request):
+    if request.authenticated_userid:
+        return HTTPFound(request.route_url('home'))
+
+    if request.method == "GET":
+        return {}
+
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        # do some verification
+        if is_authenticated(username, password):
+            headers = remember(request, username)
+            return HTTPFound(request.route_url('home'), headers=headers)
+
+        return {
+            'error': 'Username/password combination was bad.'
+        }
+
+
+@view_config(route_name='logout')
+def logout(request):
+    headers = forget(request)
+    return HTTPFound(request.route_url('home'), headers=headers)

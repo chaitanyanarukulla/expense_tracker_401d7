@@ -1,0 +1,21 @@
+{% extends "layout.jinja2" %}
+
+
+{% block content %}
+{% if error %}
+<p style="color: red">{{ error }}</p>
+{% endif %}
+<form method="POST">
+    <table>
+        <tr>
+            <td><input type="text" name="username" placeholder="Enter your username" /></td>
+        </tr>
+        <tr>
+            <td><input type="password" name="password" placeholder="Enter your password" /></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Log in" /></td>
+        </tr>
+    </table>
+</form>
+{% endblock %}

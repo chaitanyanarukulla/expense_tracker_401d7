@@ -6,3 +6,5 @@ def includeme(config):
     config.add_route('update', '/expenses/{id:\d+}/edit')
     config.add_route('delete', '/expenses/{id:\d+}/delete')
     config.add_route('api_detail', '/api/expenses/{id:\d+}')
+    config.add_route('login', '/login')
+    config.add_route('logout', '/logout')

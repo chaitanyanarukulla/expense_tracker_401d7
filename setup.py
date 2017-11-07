@@ -15,11 +15,12 @@ requires = [
     'pyramid_jinja2',
     'pyramid_retry',
     'pyramid_tm',
-    'SQLAlchemy', # OBJECT RELATIONAL MAPPER
+    'SQLAlchemy',  # OBJECT RELATIONAL MAPPER
     'transaction',
     'zope.sqlalchemy',
     'waitress',
-    'psycopg2'
+    'psycopg2',
+    'passlib'
 ]
 
 tests_require = [
