@@ -9,6 +9,8 @@ from datetime import datetime
 @view_config(route_name='home', renderer="expense_tracker:templates/index.jinja2")
 def list_expenses(request):
     expenses = request.dbsession.query(Expense).all()
+    if not expenses:
+        raise HTTPNotFound
     expenses = [expense.to_dict() for expense in expenses]
     return {
         "title": "Expense List",
@@ -36,7 +38,7 @@ def expense_detail(request):
 def create_expense(request):
     """Create a new expense and add it to the database."""
     if request.method == "GET":
-        return {}
+        return {'title': 'create'}
 
     if request.method == "POST":
         if not all([field in request.POST for field in ['title', 'amount', 'due_date']]):

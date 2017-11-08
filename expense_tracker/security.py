@@ -5,6 +5,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 from pyramid.security import Authenticated
 from pyramid.security import Allow
 from passlib.apps import custom_app_context as pwd_context
+from pyramid.session import SignedCookieSessionFactory  # <-- include this
 
 
 class MyRoot(object):
@@ -40,3 +41,9 @@ def includeme(config):
     config.set_authorization_policy(authz_policy)
     # config.set_default_permission('secret')  # if i want every view by default to be behind a login wall
     config.set_root_factory(MyRoot)
+
+    # everything below here is new
+    session_secret = os.environ.get('SESSION_SECRET', 'itsaseekrit')
+    session_factory = SignedCookieSessionFactory(session_secret)
+    config.set_session_factory(session_factory)
+    config.set_default_csrf_options(require_csrf=True)
